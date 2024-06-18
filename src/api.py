@@ -19,6 +19,11 @@ async def update_fixtures() -> None:
     await app.ingest_fixtures()
 
 
+@app.schedule("30 * * * *")
+async def update_players() -> None:
+    await app.ingest_players()
+
+
 @app.schedule("0 10 * * *")
 async def morning_message() -> None:
     date_context = await app.get_date_context(get_utc_now())

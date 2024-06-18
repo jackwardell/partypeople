@@ -6,6 +6,7 @@ from functools import lru_cache
 from typing import AsyncGenerator
 
 from pyrogram.types import User as PyrogramUser
+from sqlalchemy import and_
 from sqlalchemy import func
 from sqlalchemy import or_
 from sqlalchemy import select
@@ -251,7 +252,7 @@ class DatabaseAPI:
             query = (
                 select(PlayerTable)
                 .where(
-                    or_(
+                    and_(
                         PlayerTable.goals.isnot(None),
                         PlayerTable.goals != 0,
                     )
@@ -267,7 +268,7 @@ class DatabaseAPI:
             query = (
                 select(PlayerTable)
                 .where(
-                    or_(
+                    and_(
                         PlayerTable.goals.isnot(None),
                         PlayerTable.goals != 0,
                     )

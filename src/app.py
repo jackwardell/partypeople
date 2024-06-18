@@ -343,5 +343,4 @@ class App:
 
     def run_forever(self) -> None:
         self.scheduler.start()
-        # self.telegram_api.run(self.on_startup())
         self.telegram_api.run()
