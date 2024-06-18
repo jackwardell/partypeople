@@ -11,11 +11,11 @@ WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 
 @lru_cache
-def get_open_weather_map_api() -> OpenWeatherMapAPI:
-    return OpenWeatherMapAPI()
+def get_oweather_api() -> OWeatherAPI:
+    return OWeatherAPI()
 
 
-class OpenWeatherMapAPI:
+class OWeatherAPI:
     @classmethod
     async def get_weather_in(cls, location: str) -> Weather:
         async with httpx.AsyncClient() as client:

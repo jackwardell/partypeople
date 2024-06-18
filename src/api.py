@@ -51,6 +51,19 @@ async def insult(_: TelegramAPI, message: Message) -> None:
     await message.reply(get_insult())
 
 
+# @app.on_command(BotSlashCommand.WEATHER, description="get weather in a location")
+# async def insult(_: TelegramAPI, message: Message) -> None:
+#     if len(message.command) > 1 and len(message.entities) > 1:
+#         if message.entities[1].type == MessageEntityType.TEXT_MENTION:
+#             await message.reply(
+#                 f"{telegram_tag(message.entities[1].user.id, message.entities[1].user.first_name)} "
+#                 f"you are a {get_insult()}"
+#             )
+#             return
+#
+#     await message.reply(get_insult())
+
+
 @app.on_command(BotSlashCommand.MY_TEAMS, description="see your teams")
 async def my_teams(_: TelegramAPI, message: Message) -> None:
     user_context = await app.get_user_context(message.from_user.id)

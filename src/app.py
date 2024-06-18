@@ -11,6 +11,8 @@ from src.adapters.football_api.api import FootballAPI
 from src.adapters.football_api.api import get_football_api
 from src.adapters.telegram_api.api import TelegramAPI
 from src.adapters.telegram_api.api import get_telegram_api
+from src.adapters.weather_api.api import OWeatherAPI
+from src.adapters.weather_api.api import get_oweather_api
 from src.shared.db.api import DatabaseAPI
 from src.shared.db.api import get_database_api
 from src.shared.models import DateContext
@@ -24,7 +26,7 @@ from src.shared.utils.hardcoded import TELEGRAM_USER_ID_TO_FOOTBALL_API_TEAM_IDS
 
 class BotSlashCommand(StrEnum):
     INSULT = "insult"
-    WEATHER = "weather"
+    # WEATHER = "weather"
 
     MY_TEAMS = "myteams"
     MY_MATCHES = "mymatches"
@@ -42,6 +44,7 @@ class App:
 
     bot_commands: list[BotCommand]
 
+    # oweather_api: OWeatherAPI
     football_api: FootballAPI
     telegram_api: TelegramAPI
     database_api: DatabaseAPI
@@ -51,6 +54,7 @@ class App:
 
         self.bot_commands = []
 
+        # self.oweather_api = get_oweather_api()
         self.telegram_api = get_telegram_api()
         self.football_api = get_football_api()
         self.database_api = get_database_api()
