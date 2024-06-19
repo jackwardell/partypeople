@@ -280,10 +280,11 @@ class FixtureContext(BaseModel):
             winning_team_name=self.winning_team.name,
             winning_team_emoji=self.winning_team.emoji,
             winning_team_goals=self.winning_teams_goals,
+            verb=get_insult() + "ed",
             losing_team_name=self.losing_team.name,
             losing_team_emoji=self.losing_team.emoji,
             losing_team_goals=self.losing_teams_goals,
-            verb=get_insult() + "ed",
+            round=self.fixture.round,
             winning_user_telegram_tag=self.winning_user.telegram_tag,
             losing_user_telegram_tag=self.losing_user.telegram_tag,
         )
