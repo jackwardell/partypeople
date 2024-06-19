@@ -30,6 +30,7 @@ class BotSlashCommand(StrEnum):
 
     MY_TEAMS = "myteams"
     MY_MATCHES = "mymatches"
+    MY_PAST_MATCHES = "mypastmatches"
 
     MATCHES_TODAY = "matchestoday"
     MATCHES_TOMORROW = "matchestomorrow"

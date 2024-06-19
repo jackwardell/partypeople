@@ -76,6 +76,12 @@ async def my_matches(_: TelegramAPI, message: Message) -> None:
     await message.reply(user_context.matches_message)
 
 
+@app.on_command(BotSlashCommand.MY_PAST_MATCHES, description="see your past matches")
+async def my_past_matches(_: TelegramAPI, message: Message) -> None:
+    user_context = await app.get_user_context(message.from_user.id)
+    await message.reply(user_context.past_matches_message)
+
+
 @app.on_command(BotSlashCommand.MATCHES_TODAY, description="see all matches today")
 async def matches_today(_: TelegramAPI, message: Message) -> None:
     date_context = await app.get_date_context(get_utc_now().date())

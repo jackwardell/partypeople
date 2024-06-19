@@ -159,6 +159,14 @@ class UserContext(BaseModel):
             return f"You have no matches you fucking {get_insult()}"
 
     @property
+    def past_matches_message(self) -> str:
+        fixture_contexts = [fc for fc in self.fixture_contexts if fc.fixture.status in FixtureStatusEnum.is_finished()]
+        if fixture_contexts:
+            return "You played:\n" + "\n\n".join([fc.is_finished_message for fc in fixture_contexts])
+        else:
+            return f"You have no matches you fucking {get_insult()}"
+
+    @property
     def not_started_fixture_contexts(self) -> list[FixtureContext]:
         return [fc for fc in self.fixture_contexts if fc.fixture.status in FixtureStatusEnum.not_started()]
 
@@ -207,6 +215,20 @@ class FixtureContext(BaseModel):
             return self.away_user
 
     @property
+    def winning_teams_goals(self) -> int | None:
+        if self.winning_team.football_api_team_id == self.fixture.home_team_football_api_team_id:
+            return self.fixture.home_team_goals
+        if self.winning_team.football_api_team_id == self.fixture.away_team_football_api_team_id:
+            return self.fixture.away_team_goals
+
+    @property
+    def losing_teams_goals(self) -> int | None:
+        if self.losing_team.football_api_team_id == self.fixture.home_team_football_api_team_id:
+            return self.fixture.home_team_goals
+        if self.losing_team.football_api_team_id == self.fixture.away_team_football_api_team_id:
+            return self.fixture.away_team_goals
+
+    @property
     def not_started_message(self) -> str:
         return (
             "🤝 Teams: {home_team_name} {home_team_emoji} play {away_team_name} {away_team_emoji}\n"
@@ -251,15 +273,17 @@ class FixtureContext(BaseModel):
     def is_finished_message(self) -> str:
         return (
             "🏆 Teams: {winning_team_name} {winning_team_emoji} {verb} {losing_team_name} {losing_team_emoji} ✨\n"
-            "🏟️ Score: {home_team_goals}-{away_team_goals} 🧑‍🤝‍🧑\n"
+            "🏟️ Score: {winning_team_goals}-{losing_team_goals} 🧑‍🤝‍🧑\n"
             "🔢 Round: {round} 💫\n"
             "🎉 Well done {winning_user_telegram_tag} and get rekt {losing_user_telegram_tag} 💀"
         ).format(
             winning_team_name=self.winning_team.name,
             winning_team_emoji=self.winning_team.emoji,
+            winning_team_goals=self.winning_teams_goals,
             losing_team_name=self.losing_team.name,
             losing_team_emoji=self.losing_team.emoji,
-            verb="beat",
+            losing_team_goals=self.losing_teams_goals,
+            verb=get_insult() + "ed",
             winning_user_telegram_tag=self.winning_user.telegram_tag,
             losing_user_telegram_tag=self.losing_user.telegram_tag,
         )
