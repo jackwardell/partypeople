@@ -272,7 +272,7 @@ class FixtureContext(BaseModel):
     @property
     def is_finished_message(self) -> str:
         return (
-            "🏆 Teams: {winning_team_name} {winning_team_emoji} {verb} {losing_team_name} {losing_team_emoji} ✨\n"
+            "🏆 Teams: {winning_team_name} {winning_team_emoji} <i>{verb}</i> {losing_team_name} {losing_team_emoji} ✨\n"
             "🏟️ Score: {winning_team_goals}-{losing_team_goals} 🧑‍🤝‍🧑\n"
             "🔢 Round: {round} 💫\n"
             "🎉 Well done {winning_user_telegram_tag} and get rekt {losing_user_telegram_tag} 💀"
