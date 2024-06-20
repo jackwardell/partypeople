@@ -360,7 +360,7 @@ class App:
         logger.info("running forever...")
         self.scheduler.start()
         logger.info("scheduler started")
-        self.telegram_api.run(self.on_startup())
+        # self.telegram_api.run(self.on_startup())
         # self.telegram_api.run(self.setup_bot_commands())
         logger.info("running api")
         self.telegram_api.run()
