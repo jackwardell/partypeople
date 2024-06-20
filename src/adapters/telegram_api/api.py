@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pyrogram import Client
 from pyrogram.types import BotCommand
+from pyrogram.types import Message
 from pyrogram.types import User
 
 from src.config import get_config
@@ -27,9 +28,8 @@ class TelegramAPI(Client):
                 members.append(member.user)
         return members
 
-    async def send_chat_message(self, message: str) -> None:
-        async with self as app:
-            await app.send_message(get_config().TELEGRAM_CHAT_ID, message)
+    async def send_chat_message(self, message: str) -> Message:
+        return await self.send_message(get_config().TELEGRAM_CHAT_ID, message)
 
     async def add_bot_commands(self, bot_commands: list[BotCommand]) -> None:
         async with self as app:

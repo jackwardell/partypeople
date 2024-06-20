@@ -99,5 +99,5 @@ class FootballAPI:
             end_page = response["paging"]["total"]
             players.extend([p for p in response["response"]])
             current_page += 1
-            await asyncio.sleep(1)
+            await asyncio.sleep(3)
         return players

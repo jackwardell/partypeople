@@ -14,28 +14,46 @@ from src.shared.utils.time import get_utc_now
 app = App()
 
 
-@app.schedule("0 * * * *")
-async def update_fixtures() -> None:
-    await app.ingest_fixtures()
+# @app.schedule("0 * * * *")
+# async def update_fixtures() -> None:
+#     await app.ingest_fixtures()
 
 
-@app.schedule("30 * * * *")
-async def update_players() -> None:
-    await app.ingest_players()
+# @app.schedule("30 * * * *")
+# async def update_players() -> None:
+#     await app.ingest_players()
 
 
 @app.schedule("0 10 * * *")
 async def morning_message() -> None:
+    await app.ingest_fixtures()
+    await app.ingest_players()
     date_context = await app.get_date_context(get_utc_now())
-    await app.telegram_api.send_chat_message("Good morning party people, here are the today's matches 👇")
-    await app.telegram_api.send_chat_message(date_context.morning_message)
+    msg = await app.telegram_api.send_chat_message("Good morning party people, here are the today's matches 👇")
+    await msg.reply(date_context.message)
 
 
 @app.schedule("0 22 * * *")
 async def evening_message() -> None:
+    await app.ingest_fixtures()
+    await app.ingest_players()
     date_context = await app.get_date_context(get_utc_now())
-    await app.telegram_api.send_chat_message("Good evening party people, here are the today's results 👇")
-    await app.telegram_api.send_chat_message(date_context.evening_message)
+    msg = await app.telegram_api.send_chat_message("Good evening party people, here are the today's results 👇")
+    await msg.reply(date_context.message)
+
+
+# @app.on_command(BotSlashCommand.INGEST_FIXTURES, description="ingest fixtures")
+# async def ingest_fixtures(_: TelegramAPI, message: Message) -> None:
+#     reply = await message.reply('ingesting fixtures...')
+#     await app.ingest_fixtures()
+#     await reply.reply('done')
+
+
+# @app.on_command(BotSlashCommand.INGEST_PLAYERS, description="ingest players")
+# async def ingest_players(_: TelegramAPI, message: Message) -> None:
+#     reply = await message.reply('ingesting players...')
+#     await app.ingest_players()
+#     await reply.reply('done')
 
 
 @app.on_command(BotSlashCommand.INSULT, description="get a random insult, or tag someone to insult them")
@@ -49,19 +67,6 @@ async def insult(_: TelegramAPI, message: Message) -> None:
             return
 
     await message.reply(get_insult())
-
-
-# @app.on_command(BotSlashCommand.WEATHER, description="get weather in a location")
-# async def insult(_: TelegramAPI, message: Message) -> None:
-#     if len(message.command) > 1 and len(message.entities) > 1:
-#         if message.entities[1].type == MessageEntityType.TEXT_MENTION:
-#             await message.reply(
-#                 f"{telegram_tag(message.entities[1].user.id, message.entities[1].user.first_name)} "
-#                 f"you are a {get_insult()}"
-#             )
-#             return
-#
-#     await message.reply(get_insult())
 
 
 @app.on_command(BotSlashCommand.MY_TEAMS, description="see your teams")
@@ -91,6 +96,12 @@ async def matches_today(_: TelegramAPI, message: Message) -> None:
 @app.on_command(BotSlashCommand.MATCHES_TOMORROW, description="see all matches tomorrow")
 async def matches_tomorrow(_: TelegramAPI, message: Message) -> None:
     date_context = await app.get_date_context(get_utc_now().date() + datetime.timedelta(days=1))
+    await message.reply(date_context.message)
+
+
+@app.on_command(BotSlashCommand.MATCHES_YESTERDAY, description="see all matches yesterday")
+async def matches_yesterday(_: TelegramAPI, message: Message) -> None:
+    date_context = await app.get_date_context(get_utc_now().date() - datetime.timedelta(days=1))
     await message.reply(date_context.message)
 
 

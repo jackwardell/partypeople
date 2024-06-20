@@ -11,8 +11,9 @@ from src.adapters.football_api.api import FootballAPI
 from src.adapters.football_api.api import get_football_api
 from src.adapters.telegram_api.api import TelegramAPI
 from src.adapters.telegram_api.api import get_telegram_api
-from src.adapters.weather_api.api import OWeatherAPI
-from src.adapters.weather_api.api import get_oweather_api
+
+# from src.adapters.weather_api.api import OWeatherAPI
+# from src.adapters.weather_api.api import get_oweather_api
 from src.shared.db.api import DatabaseAPI
 from src.shared.db.api import get_database_api
 from src.shared.models import DateContext
@@ -34,6 +35,10 @@ class BotSlashCommand(StrEnum):
 
     MATCHES_TODAY = "matchestoday"
     MATCHES_TOMORROW = "matchestomorrow"
+    MATCHES_YESTERDAY = "matchesyesterday"
+
+    INGEST_FIXTURES = "ingestfixtures"
+    INGEST_PLAYERS = "ingestplayers"
 
     CATEGORIES = "categories"
 
@@ -61,6 +66,7 @@ class App:
         self.database_api = get_database_api()
 
     def schedule(self, cron_expression: str) -> callable:
+
         def decorator(func: callable) -> callable:
             self.scheduler.add_job(func, CronTrigger.from_crontab(cron_expression, timezone="UTC"))
             return func
@@ -120,6 +126,7 @@ class App:
         logger.info("started up")
 
     async def get_sweepstake_context(self) -> SweepstakeContext:
+        logger.info("getting sweepstake context...")
         return SweepstakeContext(
             categories=[
                 await self.get_first_place(),
@@ -313,6 +320,7 @@ class App:
         )
 
     async def get_fixture_context(self, football_api_fixture_id: int) -> FixtureContext:
+        logger.info(f"getting fixture context: {football_api_fixture_id=}...")
         fixture = await self.database_api.get_fixture_by_football_api_fixture_id(football_api_fixture_id)
         fixture_context = FixtureContext(
             fixture=fixture,
@@ -324,6 +332,7 @@ class App:
         return fixture_context
 
     async def get_date_context(self, date: datetime.date) -> DateContext:
+        logger.info(f"getting date context: {date=}...")
         date_context = DateContext(
             date=date,
             fixture_contexts=[
@@ -334,6 +343,7 @@ class App:
         return date_context
 
     async def get_user_context(self, telegram_api_user_id: int) -> UserContext:
+        logger.info(f"getting date context: {telegram_api_user_id=}...")
         user_context = UserContext(
             user=await self.database_api.get_user_by_telegram_api_user_id(telegram_api_user_id),
             teams=await self.database_api.get_teams_by_telegram_api_user_id(telegram_api_user_id),
@@ -347,6 +357,11 @@ class App:
         return user_context
 
     def run_forever(self) -> None:
+        logger.info("running forever...")
         self.scheduler.start()
-        # self.telegram_api.run(self.on_startup())
+        logger.info("scheduler started")
+        self.telegram_api.run(self.on_startup())
+        # self.telegram_api.run(self.setup_bot_commands())
+        logger.info("running api")
         self.telegram_api.run()
+        logger.info("finishing...")

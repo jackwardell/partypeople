@@ -187,46 +187,56 @@ class FixtureContext(BaseModel):
     away_team: Team
 
     @property
-    def winning_team(self) -> Team | None:
+    def is_draw(self) -> bool:
+        return not self.fixture.home_team_winner and not self.fixture.away_team_winner
+
+    @property
+    def winning_or_home_team(self) -> Team | None:
         if self.fixture.home_team_winner is True:
             return self.home_team
         if self.fixture.away_team_winner is True:
             return self.away_team
+        return self.home_team
 
     @property
-    def losing_team(self) -> Team | None:
+    def losing_or_away_team(self) -> Team | None:
         if self.fixture.home_team_winner is False:
             return self.home_team
         if self.fixture.away_team_winner is False:
             return self.away_team
+        return self.away_team
 
     @property
-    def winning_user(self) -> User | None:
+    def winning_or_home_user(self) -> User | None:
         if self.fixture.home_team_winner is True:
             return self.home_user
         if self.fixture.away_team_winner is True:
             return self.away_user
+        return self.home_user
 
     @property
-    def losing_user(self) -> User | None:
+    def losing_or_away_user(self) -> User | None:
         if self.fixture.home_team_winner is False:
             return self.home_user
         if self.fixture.away_team_winner is False:
             return self.away_user
+        return self.away_user
 
     @property
-    def winning_teams_goals(self) -> int | None:
-        if self.winning_team.football_api_team_id == self.fixture.home_team_football_api_team_id:
+    def winning_or_home_team_goals(self) -> int | None:
+        if self.winning_or_home_team.football_api_team_id == self.fixture.home_team_football_api_team_id:
             return self.fixture.home_team_goals
-        if self.winning_team.football_api_team_id == self.fixture.away_team_football_api_team_id:
+        if self.winning_or_home_team.football_api_team_id == self.fixture.away_team_football_api_team_id:
             return self.fixture.away_team_goals
+        return self.fixture.home_team_goals
 
     @property
-    def losing_teams_goals(self) -> int | None:
-        if self.losing_team.football_api_team_id == self.fixture.home_team_football_api_team_id:
+    def losing_or_away_teams_goals(self) -> int | None:
+        if self.losing_or_away_team.football_api_team_id == self.fixture.home_team_football_api_team_id:
             return self.fixture.home_team_goals
-        if self.losing_team.football_api_team_id == self.fixture.away_team_football_api_team_id:
+        if self.losing_or_away_team.football_api_team_id == self.fixture.away_team_football_api_team_id:
             return self.fixture.away_team_goals
+        return self.fixture.away_team_goals
 
     @property
     def not_started_message(self) -> str:
@@ -272,21 +282,21 @@ class FixtureContext(BaseModel):
     @property
     def is_finished_message(self) -> str:
         return (
-            "🏆 Teams: {winning_team_name} {winning_team_emoji} <i>{verb}</i> {losing_team_name} {losing_team_emoji} ✨\n"
+            "🏆 Teams: {winning_team_name} {winning_team_emoji} {verb} {losing_team_name} {losing_team_emoji} ✨\n"
             "🏟️ Score: {winning_team_goals}-{losing_team_goals} 🧑‍🤝‍🧑\n"
             "🔢 Round: {round} 💫\n"
             "🎉 Well done {winning_user_telegram_tag} and get rekt {losing_user_telegram_tag} 💀"
         ).format(
-            winning_team_name=self.winning_team.name,
-            winning_team_emoji=self.winning_team.emoji,
-            winning_team_goals=self.winning_teams_goals,
-            verb=get_insult() + "ed",
-            losing_team_name=self.losing_team.name,
-            losing_team_emoji=self.losing_team.emoji,
-            losing_team_goals=self.losing_teams_goals,
+            winning_team_name=self.winning_or_home_team.name,
+            winning_team_emoji=self.winning_or_home_team.emoji,
+            winning_team_goals=self.winning_or_home_team_goals,
+            verb=f"<i>{get_insult()}ed</i>" if not self.is_draw else "drew with",
+            losing_team_name=self.losing_or_away_team.name,
+            losing_team_emoji=self.losing_or_away_team.emoji,
+            losing_team_goals=self.losing_or_away_teams_goals,
             round=self.fixture.round,
-            winning_user_telegram_tag=self.winning_user.telegram_tag,
-            losing_user_telegram_tag=self.losing_user.telegram_tag,
+            winning_user_telegram_tag=self.winning_or_home_user.telegram_tag,
+            losing_user_telegram_tag=self.losing_or_away_user.telegram_tag,
         )
 
     @property

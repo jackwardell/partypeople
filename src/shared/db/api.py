@@ -116,6 +116,7 @@ class DatabaseAPI:
                     update(FixtureTable)
                     .where(FixtureTable.football_api_fixture_id == response["fixture"]["id"])
                     .values(
+                        status=response["fixture"]["status"]["short"],
                         home_team_goals=response["goals"]["home"],
                         away_team_goals=response["goals"]["away"],
                         home_team_winner=response["teams"]["home"]["winner"],
