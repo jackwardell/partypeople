@@ -160,6 +160,7 @@ class App:
             team.football_api_team_id: {
                 "team": team,
                 "losses": 0,
+                "goals_scored": 0,
                 "goals_conceded": 0,
             }
             for team in await self.database_api.get_teams()
@@ -170,6 +171,8 @@ class App:
             teams_results_map[fixture.away_team_football_api_team_id]["goals_conceded"] += fixture.home_team_goals or 0
             teams_results_map[fixture.home_team_football_api_team_id]["losses"] += 1 if fixture.away_team_winner else 0
             teams_results_map[fixture.away_team_football_api_team_id]["losses"] += 1 if fixture.home_team_winner else 0
+            teams_results_map[fixture.home_team_football_api_team_id]["goals_scored"] += fixture.home_team_goals or 0
+            teams_results_map[fixture.away_team_football_api_team_id]["goals_scored"] += fixture.away_team_goals or 0
 
         losses = 0
         worst_teams_results1 = []
@@ -192,9 +195,19 @@ class App:
         worst_team_football_api_team_ids = {i["team"].football_api_team_id for i in worst_teams_results1} & {
             j["team"].football_api_team_id for j in worst_teams_results2
         }
-        print(worst_team_football_api_team_ids)
-        assert len(worst_team_football_api_team_ids) == 1
-        worst_team_football_api_team_id = worst_team_football_api_team_ids.pop()
+        if len(worst_team_football_api_team_ids) > 1:
+            worst_teams = [
+                (worst_team_football_api_team_id, teams_results_map[worst_team_football_api_team_id]["goals_scored"])
+                for worst_team_football_api_team_id in worst_team_football_api_team_ids
+            ]
+            print(worst_teams)
+            worst_team_football_api_team_id = sorted(worst_teams, key=lambda x: x[1], reverse=True).pop()[0]
+        else:
+            worst_team_football_api_team_id = worst_team_football_api_team_ids.pop()
+
+        # print(worst_team_football_api_team_ids)
+        # assert len(worst_team_football_api_team_ids) == 1
+        # worst_team_football_api_team_id = worst_team_football_api_team_ids.pop()
 
         return SweepstakeCategory(
             id=SweepstakeCategoryIDEnum.WORST_TEAM,
@@ -204,6 +217,7 @@ class App:
             data=(
                 f"Lost {teams_results_map[worst_team_football_api_team_id]['losses']} games "
                 f"and conceded {teams_results_map[worst_team_football_api_team_id]['goals_conceded']} goals"
+                f"and only scored {teams_results_map[worst_team_football_api_team_id]['goals_conceded']} goals"
             ),
         )
 
