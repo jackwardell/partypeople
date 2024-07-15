@@ -218,7 +218,7 @@ class App:
             data=(
                 f"Lost {teams_results_map[worst_team_football_api_team_id]['losses']} games "
                 f"and conceded {teams_results_map[worst_team_football_api_team_id]['goals_conceded']} goals "
-                f"and only scored {teams_results_map[worst_team_football_api_team_id]['goals_conceded']} goals"
+                f"and only scored {teams_results_map[worst_team_football_api_team_id]['goals_scored']} goals"
             ),
         )
 
