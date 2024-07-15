@@ -24,22 +24,22 @@ app = App()
 #     await app.ingest_players()
 
 
-@app.schedule("0 10 * * *")
-async def morning_message() -> None:
-    await app.ingest_fixtures()
-    await app.ingest_players()
-    date_context = await app.get_date_context(get_utc_now().date())
-    msg = await app.telegram_api.send_chat_message("Good morning party people, here are the today's matches 👇")
-    await msg.reply(date_context.message)
+# @app.schedule("0 10 * * *")
+# async def morning_message() -> None:
+#     await app.ingest_fixtures()
+#     await app.ingest_players()
+#     date_context = await app.get_date_context(get_utc_now().date())
+#     msg = await app.telegram_api.send_chat_message("Good morning party people, here are the today's matches 👇")
+#     await msg.reply(date_context.message)
 
 
-@app.schedule("0 22 * * *")
-async def evening_message() -> None:
-    await app.ingest_fixtures()
-    await app.ingest_players()
-    date_context = await app.get_date_context(get_utc_now().date())
-    msg = await app.telegram_api.send_chat_message("Good evening party people, here are the today's results 👇")
-    await msg.reply(date_context.message)
+# @app.schedule("0 22 * * *")
+# async def evening_message() -> None:
+#     await app.ingest_fixtures()
+#     await app.ingest_players()
+#     date_context = await app.get_date_context(get_utc_now().date())
+#     msg = await app.telegram_api.send_chat_message("Good evening party people, here are the today's results 👇")
+#     await msg.reply(date_context.message)
 
 
 # @app.on_command(BotSlashCommand.INGEST_FIXTURES, description="ingest fixtures")

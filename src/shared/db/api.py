@@ -292,3 +292,12 @@ class DatabaseAPI:
                 return (await session.execute(query)).scalar().to_model()
             except AttributeError:
                 raise EntryNotFound(f"{name} not found")
+
+    @staticmethod
+    async def get_team_by_name(name: str) -> Team:
+        async with get_session() as session:
+            query = select(TeamTable).where(TeamTable.name == name)
+            try:
+                return (await session.execute(query)).scalar().to_model()
+            except AttributeError:
+                raise EntryNotFound(f"{name} not found")

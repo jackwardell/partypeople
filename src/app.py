@@ -143,16 +143,16 @@ class App:
         return SweepstakeCategory(
             id=SweepstakeCategoryIDEnum.FIRST_PLACE,
             prize_money=20,
-            team=None,
-            user=None,
+            team=await self.database_api.get_team_by_name("Spain"),
+            user=await self.database_api.get_user_by_team_name("Spain"),
         )
 
     async def get_second_place(self) -> SweepstakeCategory:
         return SweepstakeCategory(
             id=SweepstakeCategoryIDEnum.SECOND_PLACE,
             prize_money=10,
-            team=None,
-            user=None,
+            team=await self.database_api.get_team_by_name("England"),
+            user=await self.database_api.get_user_by_team_name("England"),
         )
 
     async def get_worst_team(self) -> SweepstakeCategory:
@@ -355,6 +355,9 @@ class App:
             ],
         )
         return user_context
+
+    # async def get_losers(self) -> list[User]:
+    #     logger.info(f"getting losers: {telegram_api_user_id=}...")
 
     def run_forever(self) -> None:
         logger.info("running forever...")
