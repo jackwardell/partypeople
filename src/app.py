@@ -192,6 +192,7 @@ class App:
         worst_team_football_api_team_ids = {i["team"].football_api_team_id for i in worst_teams_results1} & {
             j["team"].football_api_team_id for j in worst_teams_results2
         }
+        print(worst_team_football_api_team_ids)
         assert len(worst_team_football_api_team_ids) == 1
         worst_team_football_api_team_id = worst_team_football_api_team_ids.pop()
 
@@ -363,7 +364,7 @@ class App:
         logger.info("running forever...")
         self.scheduler.start()
         logger.info("scheduler started")
-        self.telegram_api.run(self.on_startup())
+        # self.telegram_api.run(self.on_startup())
         # self.telegram_api.run(self.setup_bot_commands())
         logger.info("running api")
         self.telegram_api.run()
