@@ -174,6 +174,7 @@ class App:
             teams_results_map[fixture.home_team_football_api_team_id]["goals_scored"] += fixture.home_team_goals or 0
             teams_results_map[fixture.away_team_football_api_team_id]["goals_scored"] += fixture.away_team_goals or 0
 
+        print(teams_results_map)
         losses = 0
         worst_teams_results1 = []
         for team, results_map in teams_results_map.items():
@@ -216,7 +217,7 @@ class App:
             user=await self.database_api.get_user_by_football_api_team_id(worst_team_football_api_team_id),
             data=(
                 f"Lost {teams_results_map[worst_team_football_api_team_id]['losses']} games "
-                f"and conceded {teams_results_map[worst_team_football_api_team_id]['goals_conceded']} goals"
+                f"and conceded {teams_results_map[worst_team_football_api_team_id]['goals_conceded']} goals "
                 f"and only scored {teams_results_map[worst_team_football_api_team_id]['goals_conceded']} goals"
             ),
         )
